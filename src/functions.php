@@ -100,15 +100,14 @@ function listCommande($pdo)
 {
     try {
         $stmt = $pdo->prepare("
-        SELECT id, numero_commande, date_commande, livreur_id, client_id 
-        FROM commande
-       /* INNER JOIN livreur ON commande.livreur_id = livreur.livreur_id;*/
-
+        SELECT commande.id, commande.numero_commande, commande.date_commande, client.nom as client_nom, client.prenom as client_prenom, livreur.nom as livreur_nom, livreur.prenom as livreur_prenom FROM commande
+        INNER JOIN client ON client.id = commande.client_id
+        INNER JOIN livreur ON livreur.id = commande.livreur_id;
         ");
         $stmt->execute();
         while ($row = $stmt->fetch()) {
             echo '<tr>';
-            echo '<td>'.$row['id'].'</td><td>'. $row['numero_commande'].'</td><td>'.$row['date_commande'].'</td><td>'.$row['livreur_id'].'</td><td>'.$row['client_id'].'"</td>';
+             echo '<td>'.$row['id'].'</td><td>'. $row['numero_commande'].'</td><td>'.$row['date_commande'].'</td><td>'.$row['livreur_nom'].' '.$row['livreur_prenom'].'</td><td>'.$row['client_nom'].' '.$row['client_prenom'].'</td>';
             echo '</tr>';
         }
     } 
@@ -123,14 +122,14 @@ function ajoutCommande($pdo)
 {
     try {
         $stmt = $pdo->prepare("
-        INSERT INTO pizza (numero_commande, date_commande, livreur_id, client_id)
+        INSERT INTO commande (numero_commande, date_commande, livreur_id, client_id)
         VALUES (:numero_commande, :date_commande, :livreur_id, :client_id);
         ");
         $stmt->execute(['numero_commande' => ($_POST['numero_commande']), 'date_commande' => ($_POST['date_commande']), 'livreur_id' => ($_POST['livreur_id']), 'client_id' => ($_POST['client_id'])]);
         echo '<h1>Bravo !</h1>';
-        echo 'Votre Pizza fait désomais partie de la liste !';
+        echo 'Votre Commande fait désomais partie de la liste !';
         echo '<br><br>';
-        echo '<a href="pizzas.php">Retourner à la liste des Pizzas</a>';
+        echo '<a href="commande.php">Retourner à la liste des commandes</a>';
          } 
     catch (PDOException $e) 
         {

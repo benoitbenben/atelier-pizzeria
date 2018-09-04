@@ -1,0 +1,141 @@
+<?php
+
+// Connexion à la base de données
+function ConnectToBDD() {
+    try {
+        $dsn = 'mysql:dbname=pizzeria;host=localhost';
+        $user = 'root';
+        $password = '';
+        $pdo = new PDO($dsn, $user, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $pdo;
+        }   
+    catch (PDOException $e) {
+        echo 'Unable to connect :' .$e->getMessage();
+        }
+}
+
+// Fonction lister les clients dans un tableau
+function listClient($pdo)
+{
+    try {
+        $stmt = $pdo->prepare("
+        SELECT id, nom, prenom, ville, age FROM client;
+        ");
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            echo '<tr>';
+            echo '<td>'.$row['id'].'</td><td>'. $row['nom'].'</td><td>'.$row['prenom'].'</td><td>'.$row['ville'].'</td><td>'.$row['age'].'" </td>';
+            echo '</tr>';
+        }
+    } 
+    catch (PDOException $e) 
+        {
+        echo $e->getMessage();
+        }
+}
+
+// Fonction ajouter une Nouveau Client
+function ajoutClient($pdo)
+{
+    try {
+        $stmt = $pdo->prepare("
+        INSERT INTO client (nom, prenom, ville, age)
+        VALUES (:nom, :prenom, :ville, :age);
+        ");
+        $stmt->execute(['nom' => ($_POST['nom']), 'prenom' => ($_POST['prenom']), 'ville' => ($_POST['ville']), 'age' => ($_POST['age'])]);
+        echo '<h1>Bravo !</h1>';
+        echo 'Le client fait désormais partie de la liste !';
+        echo '<br><br>';
+        echo '<a href="clients.php">Retourner à la liste des Clients</a>';
+         } 
+    catch (PDOException $e) 
+        {
+        echo $e->getMessage();
+        }
+}
+
+// Fonction lister les Pizzas dans un tableau
+function listPizza($pdo)
+{
+    try {
+        $stmt = $pdo->prepare("
+        SELECT id, libelle, reference, prix, url_image FROM pizza;
+        ");
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            echo '<tr>';
+            echo '<td>'.$row['id'].'</td><td>'. $row['libelle'].'</td><td>'.$row['reference'].'</td><td>'.$row['prix'].'</td><td>'.'<img src="images/'.$row['url_image'].'" width="200px"></td>';
+            echo '</tr>';
+        }
+    } 
+    catch (PDOException $e) 
+        {
+        echo $e->getMessage();
+        }
+}
+
+// Fonction ajouter une Nouvel Pizza
+function ajoutPizza($pdo)
+{
+    try {
+        $stmt = $pdo->prepare("
+        INSERT INTO pizza (libelle, reference, prix, url_image)
+        VALUES (:libelle, :reference, :prix, :url_image);
+        ");
+        $stmt->execute(['libelle' => ($_POST['libelle']), 'reference' => ($_POST['reference']), 'prix' => ($_POST['prix']), 'url_image' => ($_POST['url_image'])]);
+        echo '<h1>Bravo !</h1>';
+        echo 'Votre Pizza fait désomais partie de la liste !';
+        echo '<br><br>';
+        echo '<a href="pizzas.php">Retourner à la liste des Pizzas</a>';
+         } 
+    catch (PDOException $e) 
+        {
+        echo $e->getMessage();
+        }
+}
+
+// Fonction lister les Commandes dans un tableau
+function listCommande($pdo)
+{
+    try {
+        $stmt = $pdo->prepare("
+        SELECT id, numero_commande, date_commande, livreur_id, client_id 
+        FROM commande
+       /* INNER JOIN livreur ON commande.livreur_id = livreur.livreur_id;*/
+
+        ");
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            echo '<tr>';
+            echo '<td>'.$row['id'].'</td><td>'. $row['numero_commande'].'</td><td>'.$row['date_commande'].'</td><td>'.$row['livreur_id'].'</td><td>'.$row['client_id'].'"</td>';
+            echo '</tr>';
+        }
+    } 
+    catch (PDOException $e) 
+        {
+        echo $e->getMessage();
+        }
+}
+
+// Fonction ajouter une Nouvel Pizza
+function ajoutCommande($pdo)
+{
+    try {
+        $stmt = $pdo->prepare("
+        INSERT INTO pizza (numero_commande, date_commande, livreur_id, client_id)
+        VALUES (:numero_commande, :date_commande, :livreur_id, :client_id);
+        ");
+        $stmt->execute(['numero_commande' => ($_POST['numero_commande']), 'date_commande' => ($_POST['date_commande']), 'livreur_id' => ($_POST['livreur_id']), 'client_id' => ($_POST['client_id'])]);
+        echo '<h1>Bravo !</h1>';
+        echo 'Votre Pizza fait désomais partie de la liste !';
+        echo '<br><br>';
+        echo '<a href="pizzas.php">Retourner à la liste des Pizzas</a>';
+         } 
+    catch (PDOException $e) 
+        {
+        echo $e->getMessage();
+        }
+}
+
+?>
